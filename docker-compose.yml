@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    platform: linux/amd64
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: caminho_livre
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./sql/00_criar_banco_airflow.sql:/docker-entrypoint-initdb.d/00.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d caminho_livre"]
+      interval: 5s
+      retries: 20
+
+  airflow:
+    build: .
+    env_file: .env
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__DEFAULT_TIMEZONE: America/Sao_Paulo
+      CL_DB_DSN: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/caminho_livre
+      PYTHONPATH: /opt/airflow/src
+    user: "${AIRFLOW_UID:-50000}:0"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./src:/opt/airflow/src
+      - ./sql:/opt/airflow/sql
+      - ./data:/opt/airflow/data
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      bash -c "airflow db migrate &&
+               (airflow users create --role Admin --username admin --password admin
+                 --firstname Equipe --lastname CL --email equipe@example.com || true) &&
+               (airflow scheduler &) &&
+               exec airflow webserver"
+
+volumes:
+  pgdata:

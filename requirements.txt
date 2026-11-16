@@ -1,0 +1,6 @@
+pandas # Trabalha com tabelas
+pyarrow # salva os arquivos em parquet, um formato de arquivo para guardar tabelas. 
+pyproj # mede distancia em metros
+requests # faz requisições HTTP
+psycopg2-binary # conecta ao PostgreSQL
+    
