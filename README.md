@@ -7,7 +7,7 @@ O **Caminho Livre** é um "Waze para pedestres" acessível: ele calcula rotas a 
 
 Este repositório contém o **pipeline de dados** do produto: ele coleta, trata e carrega os dados que alimentam o cálculo das rotas.
 
-📄 **Documentação completa:** [docs/Caminho_Livre_Big_Data.pdf](docs/Caminho_Livre_Big_Data.pdf)
+**Documentação completa:** [docs/Caminho_Livre_Big_Data.pdf](docs/Caminho_Livre_Big_Data.pdf)
 
 ---
 
