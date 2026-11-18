@@ -123,8 +123,8 @@ def calcular_inclinacao(df_trechos, altitudes):
 
     def inclinacao(linha):
         h1, h2 = alt.get(linha["no_origem"]), alt.get(linha["no_destino"])
-        if h1 is None or h2 is None:
-            return None
+        if h1 is None or h2 is None or linha["comprimento_m"] < 30:
+          return None
         return round(abs(h2 - h1) / linha["comprimento_m"] * 100, 2)
 
     t["inclinacao_pct"] = t.apply(inclinacao, axis=1)
